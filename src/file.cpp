@@ -72,7 +72,7 @@ std::string getHref(std::string html)
     }
     return href;
 }
-int main(int argc, char *argv[])
+void fileOps(int argc, char *argv[])
 {
     std::vector<std::string> anchors;
     std::regex re(R"(<a([\s]+[^>]*)>(.*?)</a>)", std::regex_constants::icase);
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
         std::ifstream MyReadFile(filename);
         std::cout << red << filename << reset << std::endl;
         anchors = findAllAnchorTags(filename);
-        for (std::string x : anchors)
+        for (int i = 0; i < anchors.size(); i++)
         {
-            std::cout << x << "\n";
+            anchors[i] = getHref(anchors[i]);
         }
     }
 }
