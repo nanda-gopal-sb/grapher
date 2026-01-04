@@ -5,8 +5,9 @@
 #include <fstream>
 #include <filesystem>
 #include <regex>
-#include <bits/stdc++.h>
 std::vector<std::string> file_names;
+const std::string red("\033[1;32m");
+const std::string reset("\033[0m");
 using namespace std::filesystem;
 void getFiles(std::string path)
 {
@@ -17,7 +18,7 @@ void getFiles(std::string path)
         {
             if (entry.path().filename().generic_string()[0] != '.')
             {
-                // std::cout << "File: " << entry.path() << std::endl;
+                std::cout << "File: " << entry.path() << std::endl;
                 if (is_directory(entry.path()))
                 {
                     getFiles(entry.path());
@@ -53,7 +54,25 @@ std::vector<std::string> findAllAnchorTags(const std::string &filename)
     }
     return results;
 }
-int fileOps(int argc, char *argv[])
+std::string getHref(std::string html)
+{
+    std::string key = "href=\"";
+    std::string href = "";
+    size_t startPos = html.find(key);
+    if (startPos != std::string::npos)
+    {
+        startPos += key.length(); // Move cursor to the start of the URL
+        size_t endPos = html.find("\"", startPos);
+
+        if (endPos != std::string::npos)
+        {
+            html.substr(startPos, endPos - startPos);
+            // std::cout << "Extracted href: " << href << std::endl;
+        }
+    }
+    return href;
+}
+int main(int argc, char *argv[])
 {
     std::vector<std::string> anchors;
     std::regex re(R"(<a([\s]+[^>]*)>(.*?)</a>)", std::regex_constants::icase);
@@ -62,12 +81,11 @@ int fileOps(int argc, char *argv[])
     for (const std::string &filename : file_names)
     {
         std::ifstream MyReadFile(filename);
+        std::cout << red << filename << reset << std::endl;
         anchors = findAllAnchorTags(filename);
         for (std::string x : anchors)
         {
-            auto it = std::find(x.begin(), x.end(), "=");
-            std::string lmao(x.begin(), it);
-            std::cout << lmao << "\n";
+            std::cout << x << "\n";
         }
     }
 }
