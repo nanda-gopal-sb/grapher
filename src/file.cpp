@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <regex>
+#include <unordered_map>
 std::vector<std::string> file_names;
 const std::string red("\033[1;32m");
 const std::string reset("\033[0m");
@@ -71,6 +72,25 @@ std::string getHref(std::string html)
         }
     }
     return href;
+}
+using AdjacencyList = std::unordered_map<std::string, std::vector<std::string>>;
+
+void addEdge(AdjacencyList &adj, std::string u, std::string v)
+{
+    adj[u].push_back(v);
+}
+
+void displayAdjList(const AdjacencyList &adj)
+{
+    for (const auto &[node, neighbors] : adj)
+    {
+        std::cout << node << ": ";
+        for (const std::string &neighbor : neighbors)
+        {
+            std::cout << neighbor << " ";
+        }
+        std::cout << "\n";
+    }
 }
 void fileOps(int argc, char *argv[])
 {
