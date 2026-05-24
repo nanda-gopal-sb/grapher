@@ -67,7 +67,8 @@ std::string getHref(std::string html)
 
         if (endPos != std::string::npos)
         {
-            html.substr(startPos, endPos - startPos);
+            href = html.substr(startPos, endPos - startPos);
+            //html.substr(startPos, endPos - startPos);
             // std::cout << "Extracted href: " << href << std::endl;
         }
     }
@@ -92,20 +93,29 @@ void displayAdjList(const AdjacencyList &adj)
         std::cout << "\n";
     }
 }
-void fileOps(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     std::vector<std::string> anchors;
     std::regex re(R"(<a([\s]+[^>]*)>(.*?)</a>)", std::regex_constants::icase);
     std::string myText;
     getFiles(argv[1]);
+    AdjacencyList adj; // declare this before the loop
+
     for (const std::string &filename : file_names)
     {
-        std::ifstream MyReadFile(filename);
-        std::cout << red << filename << reset << std::endl;
+        //std::cout << red << filename << reset << std::endl;
         anchors = findAllAnchorTags(filename);
+        
         for (int i = 0; i < anchors.size(); i++)
         {
-            anchors[i] = getHref(anchors[i]);
+            std::string href = getHref(anchors[i]);
+            if (!href.empty())                    // don't add empty hrefs
+            {
+                addEdge(adj, filename, href);     // filename -> href
+            }
         }
     }
+
+    displayAdjList(adj); 
+    return 0;
 }
